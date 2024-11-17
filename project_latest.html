@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Analysis Tool</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #9face6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      overflow-y: auto;
+      color: #333;
+      padding-top: 80px; /* Space to prevent content from being hidden behind the navbar */
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #fff;
+      margin-top: 20px;
+      text-align: center;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+      width: 100%;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+      width: 100%;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      margin: 15px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #007BFF;
+      color: white;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      width: 200px;
+    }
+
+    button:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+
+    nav {
+      width: 100%;
+      background: #007BFF;
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    nav button {
+      color: white;
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    nav button:hover {
+      background: #0056b3;
+      border-radius: 5px;
+    }
+
+    .input-container {
+      margin-top: 60px;
+      display: none;
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 600px;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    input[type="text"] {
+      display: block;
+      margin: 20px auto;
+      padding: 15px;
+      width: 90%;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    button#check-similarity, button#check-ai {
+      background-color: #28a745;
+    }
+
+    button#check-similarity:hover, button#check-ai:hover {
+      background-color: #218838;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1);
+      font-size: 18px;
+      min-height: 60px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    /* Help Popup */
+    .help-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+      width: 400px;
+      z-index: 1000;
+    }
+
+    .help-popup h3 {
+      color: #333;
+    }
+
+    .help-popup p {
+      font-size: 16px;
+      color: #555;
+    }
+
+    .close-btn {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      font-size: 16px;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .close-btn:hover {
+      background-color: #c82333;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>Text Analysis Tool</h1>
+
+  <div class="buttons" id="main-buttons">
+    <button id="btn-similarity">Text Similarity</button>
+    <button id="btn-ai-detection">AI Detection</button>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav id="navbar">
+    <div>
+      <button id="nav-similarity">Text Similarity</button>
+      <button id="nav-ai-detection">AI Detection</button>
+    </div>
+    <button id="help">Help</button>
+  </nav>
+
+  <!-- Input Containers -->
+  <div class="input-container" id="similarity-container">
+    <h2>Check Text Similarity</h2>
+    <input type="text" id="text1" placeholder="Enter first text">
+    <input type="text" id="text2" placeholder="Enter second text">
+    <button id="check-similarity">Check Similarity</button>
+    <div id="result">
+      <p id="similarity-result"></p>
+    </div>
+  </div>
+
+  <div class="input-container" id="ai-detection-container">
+    <h2>AI Detection</h2>
+    <input type="text" id="ai-text" placeholder="Enter text to check">
+    <button id="check-ai">Check AI Content</button>
+    <div id="result">
+      <p id="ai-result"></p>
+    </div>
+  </div>
+
+  <!-- Help Popup -->
+  <div class="help-popup" id="help-popup">
+    <h3>Team Members:</h3>
+    <p>Saksham Tiwari<br>Saksham.Tiwari2021@vitstudent.ac.in</p>
+    <p>Manan Mehta<br>Manan.Mehta2021@vitstudent.ac.in</p>
+    <p>Yash Parate<br>Yash.Parate2021@vitstudent.ac.in</p>
+    <h3>For any queries, reach out to:</h3>
+    <p>help.us@gmail.com</p>
+    <button class="close-btn" id="close-btn">Close</button>
+  </div>
+
+  <script>
+    const btnSimilarity = document.getElementById('btn-similarity');
+    const btnAIDetection = document.getElementById('btn-ai-detection');
+    const similarityContainer = document.getElementById('similarity-container');
+    const aiDetectionContainer = document.getElementById('ai-detection-container');
+    const navbar = document.getElementById('navbar');
+    const mainButtons = document.getElementById('main-buttons');
+
+    // Toggle between similarity and AI detection containers
+    function showContainer(containerToShow) {
+      similarityContainer.style.display = 'none';
+      aiDetectionContainer.style.display = 'none';
+      containerToShow.style.display = 'block';
+      navbar.style.display = 'flex'; // Show navbar
+      mainButtons.classList.add('hidden'); // Hide main buttons
+    }
+
+    btnSimilarity.addEventListener('click', () => showContainer(similarityContainer));
+    btnAIDetection.addEventListener('click', () => showContainer(aiDetectionContainer));
+
+    // Navigation buttons
+    document.getElementById('nav-similarity').addEventListener('click', () => showContainer(similarityContainer));
+    document.getElementById('nav-ai-detection').addEventListener('click', () => showContainer(aiDetectionContainer));
+
+    // Help Popup
+    document.getElementById('help').addEventListener('click', () => {
+      document.getElementById('help-popup').style.display = 'block';
+    });
+
+    document.getElementById('close-btn').addEventListener('click', () => {
+      document.getElementById('help-popup').style.display = 'none';
+    });
+
+    // Check similarity
+    document.getElementById('check-similarity').addEventListener('click', () => {
+      const text1 = document.getElementById('text1').value.trim();
+      const text2 = document.getElementById('text2').value.trim();
+      document.getElementById('similarity-result').textContent =
+        text1 === text2 ? 'Texts are identical.' : 'Texts are different.';
+    });
+
+    // Mock AI Detection
+    document.getElementById('check-ai').addEventListener('click', () => {
+      const text = document.getElementById('ai-text').value.trim();
+      document.getElementById('ai-result').textContent =
+        text.toLowerCase().includes('ai')
+          ? 'Text is likely AI-generated.'
+          : 'Text appears human-written.';
+    });
+  </script>
+</body>
+</html>
